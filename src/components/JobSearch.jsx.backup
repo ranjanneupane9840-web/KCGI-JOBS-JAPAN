@@ -1,0 +1,284 @@
+import React, { useState } from 'react';
+
+// Example job data for the practice search (front-end only)
+const jobs = [
+  {
+    id: 1,
+    title: 'Convenience Store Staff',
+    company: 'Kyoto Station FamilyMart',
+    location: 'kyoto',
+    locationLabel: 'Kyoto',
+    category: 'retail',
+    categoryLabel: 'Retail / Convenience Store',
+    type: 'Part-time',
+    salary: 1150,
+    notes: 'Beginner Japanese OK for simple tasks. Night and weekend shifts available.',
+    tags: ['Beginner Japanese OK', 'Shift work'],
+  },
+  {
+    id: 2,
+    title: 'Café Staff',
+    company: 'Osaka Namba Coffee',
+    location: 'osaka',
+    locationLabel: 'Osaka',
+    category: 'hospitality',
+    categoryLabel: 'Hospitality / Café',
+    type: 'Part-time',
+    salary: 1200,
+    notes: 'Customer service role. Basic Japanese conversation required.',
+    tags: ['Customer service', 'Speaking practice'],
+  },
+  {
+    id: 3,
+    title: 'English Conversation Teacher',
+    company: 'Kyoto Kids Eikaiwa',
+    location: 'kyoto',
+    locationLabel: 'Kyoto',
+    category: 'teaching',
+    categoryLabel: 'Teaching / English',
+    type: 'Part-time',
+    salary: 2000,
+    notes: 'Teach children after school. English native speakers preferred.',
+    tags: ['English teaching', 'Afternoon / Evening'],
+  },
+  {
+    id: 4,
+    title: 'IT Support Assistant',
+    company: 'Tokyo Tech Startup',
+    location: 'tokyo',
+    locationLabel: 'Tokyo',
+    category: 'it',
+    categoryLabel: 'IT / Programming',
+    type: 'Internship',
+    salary: 1500,
+    notes: 'Help with testing and documentation. Reading Japanese helpful but not required.',
+    tags: ['IT', 'English OK'],
+  },
+  {
+    id: 5,
+    title: 'Remote Data Entry',
+    company: 'Online Research Company',
+    location: 'remote',
+    locationLabel: 'Remote / Online',
+    category: 'office',
+    categoryLabel: 'Office / Data Entry',
+    type: 'Part-time (Remote)',
+    salary: 1300,
+    notes: 'Work from home using your PC. Basic Excel skills required.',
+    tags: ['Remote', 'PC work'],
+  },
+  {
+    id: 6,
+    title: 'Hotel Front Desk Assistant',
+    company: 'Kyoto City Hotel',
+    location: 'kyoto',
+    locationLabel: 'Kyoto',
+    category: 'hospitality',
+    categoryLabel: 'Hospitality / Hotel',
+    type: 'Part-time',
+    salary: 1350,
+    notes: 'Tourist-heavy area. JLPT N3+ recommended for this job.',
+    tags: ['Tourism', 'JLPT N3+'],
+  },
+  {
+    id: 7,
+    title: 'Programming Tutor (Python)',
+    company: 'Online Coding School',
+    location: 'remote',
+    locationLabel: 'Remote / Online',
+    category: 'it',
+    categoryLabel: 'IT / Programming',
+    type: 'Part-time (Remote)',
+    salary: 2200,
+    notes: 'Teach basic programming in English to beginners.',
+    tags: ['Teaching', 'IT', 'English OK'],
+  },
+  {
+    id: 8,
+    title: 'Supermarket Floor Staff',
+    company: 'Osaka Supermarket Chain',
+    location: 'osaka',
+    locationLabel: 'Osaka',
+    category: 'retail',
+    categoryLabel: 'Retail / Supermarket',
+    type: 'Part-time',
+    salary: 1100,
+    notes: 'Shelf stocking and backroom work. Less speaking compared to cashier.',
+    tags: ['Physical work', 'Beginner Japanese'],
+  },
+];
+
+const JobSearch = () => {
+  const [location, setLocation] = useState('all');
+  const [category, setCategory] = useState('all');
+  const [minSalary, setMinSalary] = useState('');
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const numericSalary = parseInt(minSalary, 10);
+
+    const results = jobs.filter((job) => {
+      if (location !== 'all' && job.location !== location) return false;
+      if (category !== 'all' && job.category !== category) return false;
+      if (!Number.isNaN(numericSalary) && job.salary < numericSalary) return false;
+      return true;
+    });
+
+    setFilteredJobs(results);
+    setHasSearched(true);
+  };
+
+  return (
+    <section id="job-search" className="bg-white">
+      <div className="mx-auto max-w-5xl px-4 py-8 md:px-6 lg:px-0 lg:py-10">
+        <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h3 className="text-xl md:text-2xl font-semibold tracking-tight text-slate-900">
+              Search Jobs
+            </h3>
+            <p className="text-sm text-slate-600 max-w-xl">
+              Use this simple form to think about where and what kind of job you want in Japan.
+              This is a practice tool – the jobs below are examples, not real listings.
+            </p>
+          </div>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm md:grid-cols-4 md:items-end"
+        >
+          <div className="md:col-span-1">
+            <label className="block text-xs font-medium text-slate-600 mb-1">
+              Location (area)
+            </label>
+            <select
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            >
+              <option value="all">All Locations</option>
+              <option value="kyoto">Kyoto</option>
+              <option value="osaka">Osaka</option>
+              <option value="tokyo">Tokyo</option>
+              <option value="remote">Remote / Online</option>
+            </select>
+          </div>
+
+          <div className="md:col-span-1">
+            <label className="block text-xs font-medium text-slate-600 mb-1">
+              Job category
+            </label>
+            <select
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="all">All Categories</option>
+              <option value="it">IT / Programming</option>
+              <option value="teaching">Teaching / Tutoring</option>
+              <option value="hospitality">Hospitality / Café / Hotel</option>
+              <option value="retail">Retail / Convenience Store</option>
+              <option value="office">Office / Data Entry</option>
+            </select>
+          </div>
+
+          <div className="md:col-span-1">
+            <label className="block text-xs font-medium text-slate-600 mb-1">
+              Minimum hourly wage (yen)
+            </label>
+            <input
+              type="number"
+              min="0"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              placeholder="Example: 1200"
+              value={minSalary}
+              onChange={(e) => setMinSalary(e.target.value)}
+            />
+            <p className="mt-1 text-[11px] text-slate-500">
+              Many student part-time jobs are around ¥1,100–¥1,400/hour.
+            </p>
+          </div>
+
+          <div className="md:col-span-1">
+            <button
+              type="submit"
+              className="mt-1 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-dark transition"
+            >
+              Find example jobs
+            </button>
+            <p className="mt-2 text-[11px] text-slate-500">
+              Results are examples only. Use real job sites and apps to apply.
+            </p>
+          </div>
+        </form>
+
+        {hasSearched && (
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/60 p-4 shadow-sm">
+            <div className="flex flex-col gap-1 md:flex-row md:items-baseline md:justify-between">
+              <h4 className="text-sm font-semibold text-slate-900">
+                Available Jobs ({filteredJobs.length})
+              </h4>
+              <p className="text-[11px] text-slate-500 max-w-md">
+                These jobs are sample data to help you practice searching. Always check real websites like
+                Town Work, Baitoru, or GaijinPot for up-to-date information.
+              </p>
+            </div>
+
+            {filteredJobs.length === 0 ? (
+              <p className="mt-3 text-sm text-slate-600">
+                No jobs match your filters yet. Try changing the location, category, or minimum salary.
+              </p>
+            ) : (
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {filteredJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="rounded-xl bg-white p-3 text-sm shadow-sm ring-1 ring-slate-200"
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <div>
+                        <p className="font-semibold text-slate-900">{job.title}</p>
+                        <p className="text-xs text-slate-600">{job.company}</p>
+                      </div>
+                      <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+                        {job.type}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-600">
+                      <span>{job.locationLabel}</span>
+                      <span>• {job.categoryLabel}</span>
+                      <span>• ¥{job.salary.toLocaleString()} / hour</span>
+                    </div>
+
+                    {job.notes && (
+                      <p className="mt-2 text-[11px] text-slate-500">{job.notes}</p>
+                    )}
+
+                    {job.tags && job.tags.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {job.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-slate-50 px-2 py-0.5 text-[10px] text-slate-600 ring-1 ring-slate-200"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export default JobSearch;
